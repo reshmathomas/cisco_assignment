@@ -8,5 +8,5 @@ db = MySQLdb.connect(mysql_host, username, password)
 cursor = db.cursor()
 cursor.execute("CREATE DATABASE if not exists malware_urls;")
 cursor.execute("USE malware_urls;")
-query = "CREATE TABLE if not exists malware_url_info (url VARCHAR(512));"
+query = "CREATE TABLE if not exists malware_url_info (url VARCHAR(512) PRIMARY KEY);"
 cursor.execute(query)
