@@ -67,3 +67,13 @@ This creates the database and malware_url_info table. Insert few fake URLs in th
 `http://localhost:105/v1/urlinfo/?url=https://www.fakeurl.com`
 
 4. Run the tests from the parent directory using the command: `python -m tests.test_malware_url_lookup_db`
+	
+## Test results
+![image](https://user-images.githubusercontent.com/5567652/211223818-f73b305b-b3c4-4386-884c-f323fa755186.png)
+
+![image](https://user-images.githubusercontent.com/5567652/211223842-7190803f-e1c8-4bde-ad73-741c538b2577.png)
+
+![image](https://user-images.githubusercontent.com/5567652/211223859-80cb875c-7fa6-48c9-9283-fe034a2aa9f5.png)
+
+
+`http://localhost:105/v1/urlinfo/?url=https://www.fakeurl.com`
