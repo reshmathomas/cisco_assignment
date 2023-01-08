@@ -35,6 +35,10 @@ a malware or not by checking whether the URL exists in the malware_urls.malware_
 4. Distributed NoSQL database to be able to store as many URLs as required. Even though the relational databases can be used to efficiently lookup URLs, these can be difficult to scale. Hence, the use of a NoSQL database is preferred here.
 	4.1. Choice of NoSQL database - If eventual consistency is acceptable, Redis is preferred here since it can be used as an in-memory cache and a database. Therefore, the caching layer can be combined with the data storage layer. If strong consistency is required, Mongo DB is preferred here but will result in a few seconds of downtime for leader election as it is deployed as primary-secondary servers. MongoDB also has concurrency control protocols, thus handling concurrent reads and writes to the database.
 	4.2 Data stored in the database: Currently, the hostname extracted from the URL is stored as is. This is to treat a URL with and without https the same. However, a way to deal with URLs longer than 512 bytes are to hash the URL and use the hash as the primary index.
+	4.3 Database schema:
+		Field: url
+		Type: varchar(512)
+		Key: Primary Key
 
 ## System APIs
 1. GET /v1/urlinfo/{url} (Implemented)
@@ -62,6 +66,7 @@ Note: Installing MySQL and client on MacOS can be tricky. Recommend following th
 `python app.py`
 This creates the database and malware_url_info table. Insert few fake URLs in the table as follows:
 `INSERT INTO malware_url_info values("www.fakeurl.com");`
+Note: Password will need to be configured and added to app/db_conn_config.py
 
 3. Send a GET request to the web service that runs on localhost:105 by typing in the following in a browser:
 `http://localhost:105/v1/urlinfo/?url=https://www.fakeurl.com`
@@ -77,3 +82,16 @@ This creates the database and malware_url_info table. Insert few fake URLs in th
 
 
 `http://localhost:105/v1/urlinfo/?url=https://www.fakeurl.com`
+
+## Evaluation of design decisions:
+1. The size of the URL list could grow infinitely, how might you scale this beyond the
+memory capacity of the system?
+- Inorder to scale the system to handle an infinitely growing URL list, the list of URLs must be stored in a separate 
+distributed NoSQL database server such as Redis or MongoDB with data horizontally sharded across the distributed database instances. The shards must also be replicated across servers to ensure fault-tolerance.
+
+2. The number of requests may exceed the capacity of this system, how might you solve that?
+- To handle requests that exceed the capacity of the system, the web service must be deployed in containers such as Kubernetes across a fleet of horizontally scaled servers. A load balancer must be used in this case to route requests from clients to these servers based on load.
+
+3.  What are some strategies you might use to update the service with new URLs? Updates
+may be as many as 5000 URLs a day with updates arriving every 10 minutes.
+- Functionality wise, the web service must now handle POST requests to add new URLs to the database. The URL column can be used as primary index to avoid duplications. The same web service can be used to service reads and writes to the database. This is because using separate microservices to access the same database doesn't scale well. To handle peak traffic rate of 5000 new URLs in 10 minutes (max in a day arriving at the same time), sharding across disributed database instances will work. 
