@@ -66,3 +66,4 @@ This creates the database and malware_url_info table. Insert few fake URLs in th
 3. Send a GET request to the web service that runs on localhost:105 by typing in the following in a browser:
 `http://localhost:105/v1/urlinfo/?url=https://www.fakeurl.com`
 
+4. Run the tests from the parent directory using the command: `python -m tests.test_malware_url_lookup_db`
