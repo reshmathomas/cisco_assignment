@@ -13,9 +13,9 @@ def get():
         raise
 
     if is_url_malware:
-        return "Malware!"
+        return url + ": Malware!"
     else:
-        return "Not a malware!"
+        return url + ": NOT a malware!"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=105)
