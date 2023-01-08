@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from malware_url_lookup_service import malware_url_lookup_service
 
 app = Flask(__name__)
@@ -12,10 +12,7 @@ def get():
         print "Error occured during validation of url."
         raise
 
-    if is_url_malware:
-        return url + ": Malware!"
-    else:
-        return url + ": NOT a malware!"
+    return jsonify({'URL':url, 'malware':is_url_malware}) 
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=105)
